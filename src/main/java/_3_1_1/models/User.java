@@ -22,14 +22,6 @@ public class User implements UserDetails {
     @Column
     private String password;
 
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
-    /*@JoinTable(
-            name = "users_roles"
-            , joinColumns = @JoinColumn(name = "users_id")
-            , inverseJoinColumns = @JoinColumn(name = "roles_id")
-    )*/
-    private Set<Role> roles;
-
     @Column
     private String firstName;
 
@@ -38,6 +30,10 @@ public class User implements UserDetails {
 
     @Column
     private String cellphone;
+
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+
+    private Set<Role> roles;
 
 
     public User() {
@@ -102,6 +98,7 @@ public class User implements UserDetails {
     public String getFirstName() {
         return firstName;
     }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -109,6 +106,7 @@ public class User implements UserDetails {
     public String getSecondName() {
         return secondName;
     }
+
     public void setSecondName(String secondName) {
         this.secondName = secondName;
     }

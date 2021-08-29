@@ -2,6 +2,7 @@ package _3_1_1.controllers;
 
 import _3_1_1.models.User;
 import _3_1_1.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,8 +60,11 @@ public class UserController {
 
 
     @GetMapping("/admin")
-    public String admin(Model model) {
+    public String admin(Model model, Authentication authentication) {
+        User user = service.getUserByLogin(authentication.getName());
+        model.addAttribute("currentuser", user);
         model.addAttribute("all_users", service.getAllUsers());
+
         return "admin";
     }
 
@@ -81,10 +85,7 @@ public class UserController {
 
     @GetMapping("admin/{id}/update")
     public String updateUser(@PathVariable("id") Long id, Model model) {
-        //List<Role> allRoles = service.getAllRoles();
-        //User u = service.getUserById(id);
         model.addAttribute("user", service.getUserById(id));
-        //model.addAttribute("allRoles", allRoles);
         return "update";
     }
 
