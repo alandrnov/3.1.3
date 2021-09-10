@@ -1,5 +1,7 @@
 package _3_1_1.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,6 +32,7 @@ public class User implements UserDetails {
 
     @Column
     private String cellphone;
+
 
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
 
@@ -79,6 +82,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
+    //@JsonIgnore
     public String getRoles() {
         StringBuilder s = new StringBuilder();
 
@@ -90,6 +94,7 @@ public class User implements UserDetails {
         }
         return s.toString();
     }
+    @JsonProperty
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
@@ -139,5 +144,17 @@ public class User implements UserDetails {
         return this.getRoles().contains("ROLE_ADMIN");
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", cellphone='" + cellphone + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 }
 

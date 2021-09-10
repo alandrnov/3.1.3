@@ -69,44 +69,5 @@ public class UserController {
     }
 
 
-    @GetMapping("/admin/create")
-    public String create(Model model) {
-        model.addAttribute("new_user", new User());
-        return "create";
-    }
-
-    @PostMapping("/admin/create")
-    public String create(@ModelAttribute("new_user") User u, @RequestParam("new_user_roles") String rol) {
-        u.setRoles(service.getRolesFromText(rol));
-        service.addUser(u);
-        return "redirect:/admin";
-    }
-
-
-    @GetMapping("admin/{id}/update")
-    public String updateUser(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", service.getUserById(id));
-        return "update";
-    }
-
-    @PatchMapping("/admin/update")
-   public String updateUser(@ModelAttribute("user") User u, @RequestParam("user_roles") String rol) {
-          u.setRoles(service.getRolesFromText(rol));
-
-        service.updateUser(u);
-        return "redirect:/admin";
-    }
-
-
-    @GetMapping("/admin/delete")
-    public String delete() {
-        return "delete";
-    }
-
-    @DeleteMapping("/admin/delete")
-    public String delete(@RequestParam("delete_id") Long id) {
-        service.deleteUser(id);
-        return "redirect:/admin";
-    }
 
 }

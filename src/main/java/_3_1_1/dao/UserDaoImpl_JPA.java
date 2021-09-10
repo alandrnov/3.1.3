@@ -57,7 +57,7 @@ public class UserDaoImpl_JPA implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        return entityManager.createQuery("select u from User u join fetch u.roles", User.class).getResultList();
+        return entityManager.createQuery("select u from User u", User.class).getResultList();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class UserDaoImpl_JPA implements UserDao {
 
     @Override
     public void updateUser(User user) {
-        //User usertobeUpdated = getUserById(id);
+
         entityManager.merge(user);
     }
 
