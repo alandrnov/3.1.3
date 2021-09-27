@@ -1,5 +1,9 @@
 package _3_1_1.security;
 
+import _3_1_1.security.oauth.CustomOAuth2User;
+import _3_1_1.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -13,10 +17,21 @@ import java.util.Set;
 
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(@Lazy UserService userService) {
+        this.userService = userService;
+    }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException, ServletException {
+        if (userService.getUserByLogin(authentication.getName()) == null) {
+            CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+            userService.processOAuthPostLogin(oauthUser.getName(), oauthUser.getAttributes());
+        }
+
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         if (roles.contains("ROLE_ADMIN")) {
             httpServletResponse.sendRedirect("/admin");

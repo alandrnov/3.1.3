@@ -7,7 +7,7 @@ $(document).ready(function () {
 // создаем таблицу всех юзеров
 async function createTable() {
 
-    let response = await fetch("/api")
+    let response = await fetch("admin/api")
     let users = await response.json()
     console.log(users)
 
@@ -41,7 +41,7 @@ async function createTable() {
 // получаем юзера в форму редактирования
 async function getUserForEdit(id) {
     console.log("1 получаем юзера в форму редактирования getUserForEdit(id) + " + id)
-    let user = await fetch('/api/' + id).then(response => response.json())
+    let user = await fetch('admin/api/' + id).then(response => response.json())
 
     $(".editForm #edit_id").val(user.id)
     $(".editForm #edit_login").val(user.login)
@@ -63,9 +63,10 @@ function editUser() {
 
         let arr = Array.from(document.getElementById("role").options).filter(option => option.selected)
             .map(option => option.value)
-            .map(value => { return value === 'ROLE_ADMIN'
-                ? {id: 1, role: 'ROLE_ADMIN'}
-                : {id: 2, role: 'ROLE_USER'};
+            .map(value => {
+                return value === 'ROLE_ADMIN'
+                    ? {id: 1, role: 'ROLE_ADMIN'}
+                    : {id: 2, role: 'ROLE_USER'};
             })
 
         //
@@ -80,20 +81,26 @@ function editUser() {
             //
         }
         console.log(editedUser + "отправляем отредактированного юзера")
-        fetch('/api/',
+        fetch('admin/api/',
             {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(editedUser)
-            })
-            .then(result => console.log(result))
-        window.location.href = "/admin"
+            }).then(function () {
+            $('#editModal .close').click();
+            $("#allUser tbody").empty();
+            createTable();
+
+
+        })
+
+
     })
 }
 // получаем юзера в форму удаления
 async function getUserForDelete(id) {
     console.log("1 получаем юзера в форму удаления getUserForDelete(id) + " + id)
-    let user = await fetch('/api/' + id).then(response => response.json())
+    let user = await fetch('admin/api/' + id).then(response => response.json())
 
     $(".deleteForm #delete_id").val(user.id)
     $(".deleteForm #delete_login").val(user.login)
@@ -105,9 +112,13 @@ async function getUserForDelete(id) {
 
     $("#deleteForm").submit(function (event) {
         event.preventDefault()
-        fetch('/api/' + id,
+        fetch('admin/api/' + id,
             {method: 'DELETE'})
-        window.location.href = "/admin"
+            .then(function () {
+                $('#deleteModal .close').click();
+                 $("#allUser tbody").empty();
+                createTable();
+            })
     })
 }
 
@@ -135,13 +146,20 @@ function addUser() {
             //
         }
 
-        await fetch('/api/',
+        await fetch('admin/api/',
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(user)
             })
-            .then(result => console.log(result))
-        window.location.href = "/admin"
+            .then(function (){
+
+                $('[href="#users"]').tab('show');
+                $("#allUser tbody").empty();
+                createTable();
+                }
+            )
+            //.then(result => console.log(result))
+      //  window.location.href = "/admin"
     })
 }

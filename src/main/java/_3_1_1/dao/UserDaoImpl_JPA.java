@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,43 +18,6 @@ public class UserDaoImpl_JPA implements UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Override
-    public Role getRoleByName(String name) {
-        try {
-            entityManager
-                    .createQuery("select r from Role r where r.role = :name", Role.class)
-                    .setParameter("name", name)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            Role r = new Role();
-            r.setRole(name);
-            entityManager.persist(r);
-        }
-
-        return entityManager
-                .createQuery("select r from Role r where r.role = :name", Role.class)
-                .setParameter("name", name)
-                .getSingleResult();
-    }
-
-    @Override
-    public Set<Role> getRolesFromText(String text) {
-        Set<Role> roles = new HashSet<>();
-
-        text = text.toLowerCase();
-
-        if ( text.contains("admin") ) {
-            Role role = getRoleByName("ROLE_ADMIN");
-            roles.add(role);
-        }
-        if ( text.contains("user") ) {
-            Role role = getRoleByName("ROLE_USER");
-            roles.add(role);
-        }
-
-        return roles;
-    }
 
     @Override
     public List<User> getAllUsers() {
@@ -67,8 +31,13 @@ public class UserDaoImpl_JPA implements UserDao {
 
     @Override
     public User getUserByLogin(String login) {
-        return entityManager.createQuery("select u from User u join fetch u.roles where u.login = :login", User.class)
-                .setParameter("login", login).getSingleResult();
+        TypedQuery<User> query = entityManager.createQuery("select u from User u join fetch u.roles where u.login = :login", User.class)
+                .setParameter("login", login);
+                try {
+                    return query.getSingleResult();
+                }catch (NoResultException e) {
+                    return null;
+                }
     }
 
     @Override
@@ -88,11 +57,11 @@ public class UserDaoImpl_JPA implements UserDao {
         entityManager.merge(user);
     }
 
-    @Override
-
-    public List<Role> getAllRoles() {
-        return entityManager.createQuery("select r from Role r", Role.class).getResultList();
-    }
+//    @Override
+//
+//    public List<Role> getAllRoles() {
+//        return entityManager.createQuery("select r from Role r", Role.class).getResultList();
+//    }
 
     @Override
     public User getUserById(Long id) {

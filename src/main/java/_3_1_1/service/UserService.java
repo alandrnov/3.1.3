@@ -3,17 +3,14 @@ package _3_1_1.service;
 
 
 
-import _3_1_1.models.Role;
 import _3_1_1.models.User;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public interface UserService {
-
-    Role getRoleByName(String name);
-
-    public Set<Role> getRolesFromText(String text);
 
     List<User> getAllUsers();
 
@@ -27,7 +24,8 @@ public interface UserService {
 
     void updateUser(User user);
 
-    List<Role> getAllRoles();
-
     User getUserById(Long id);
+
+
+    void processOAuthPostLogin(String username, Map<String, Object> attributes);
 }

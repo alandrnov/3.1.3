@@ -1,32 +1,40 @@
 package _3_1_1.service;
 
+import _3_1_1.dao.RoleDAO;
 import _3_1_1.dao.UserDao;
+import _3_1_1.models.AuthenticationProvider;
 import _3_1_1.models.Role;
 import _3_1_1.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+    private RoleDAO roleDAO;
+    private PasswordEncoder passwordEncoder;
+
+    private final String DEFAULT_PASSWORD = "1234";
+
+    @Autowired
+    public UserServiceImpl(UserDao userDao, RoleDAO roleDAO, PasswordEncoder passwordEncoder) {
+            this.userDao = userDao;
+            this.roleDAO = roleDAO;
+            this.passwordEncoder = passwordEncoder;
+        }
+
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
-    }
-
-    @Transactional
-    @Override
-    public Role getRoleByName(String name) {
-        return userDao.getRoleByName(name);
-    }
-
-    @Override
-    public Set<Role> getRolesFromText(String text) {
-        return userDao.getRolesFromText(text);
     }
 
     @Transactional(readOnly = true)
@@ -50,6 +58,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void addUser(User user) {
+        user.setAuthProvider(AuthenticationProvider.LOCAL);
         userDao.addUser(user);
     }
 
@@ -64,14 +73,29 @@ public class UserServiceImpl implements UserService {
     public void updateUser(User user) {
         userDao.updateUser(user);
     }
-    @Transactional
-    @Override
-    public List<Role> getAllRoles() {
-        return userDao.getAllRoles();
-    }
+
     @Transactional
     @Override
     public User getUserById(Long id) {
         return userDao.getUserById(id);
+    }
+
+    @Transactional
+    @Override
+    public void processOAuthPostLogin(String username, Map<String, Object> attributes) {
+        System.out.println(attributes);
+        User newUser = new User();
+        newUser.setLogin(username);
+        if (username.contains("@gmail.com")) {
+            newUser.setAuthProvider(AuthenticationProvider.GOOGLE);
+            newUser.setFirstName((String) attributes.get("given_name"));
+            newUser.setSecondName((String) attributes.get("family_name"));
+        }
+
+        newUser.setPassword(DEFAULT_PASSWORD);
+        newUser.setRoles(Collections.singleton(roleDAO.getRoleByName("ROLE_USER")));
+
+
+        userDao.addUser(newUser);
     }
 }

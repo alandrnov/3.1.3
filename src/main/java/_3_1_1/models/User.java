@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +36,12 @@ public class User implements UserDetails {
     @Column
     private String cellphone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider")
+    private AuthenticationProvider authProvider;
 
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+
+    @ManyToMany(fetch = FetchType.LAZY)
 
     private Set<Role> roles;
 
@@ -42,7 +49,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(long id, String login, String password, Set<Role> roles, String firstName, String secondName, String cellphone) {
+    public User(long id, String login, String password, Set<Role> roles, String firstName, String secondName, String cellphone, AuthenticationProvider authProvider) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -50,6 +57,7 @@ public class User implements UserDetails {
         this.firstName = firstName;
         this.secondName = secondName;
         this.cellphone = cellphone;
+        this.authProvider= authProvider;
     }
 
     public long getId() {
@@ -75,7 +83,7 @@ public class User implements UserDetails {
         return password;
     }
     public void setPassword(String password) {
-        this.password = password;
+        this.password = passwordEncoder.encode(password);
     }
 
     @Override
@@ -123,6 +131,14 @@ public class User implements UserDetails {
         this.cellphone = cellphone;
     }
 
+    public AuthenticationProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthenticationProvider authProvider) {
+        this.authProvider = authProvider;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -153,7 +169,8 @@ public class User implements UserDetails {
                 ", firstName='" + firstName + '\'' +
                 ", secondName='" + secondName + '\'' +
                 ", cellphone='" + cellphone + '\'' +
-                ", roles=" + roles +
+                ", roles=" + roles + '\'' +
+                ", authProvider=" + authProvider +
                 '}';
     }
 }

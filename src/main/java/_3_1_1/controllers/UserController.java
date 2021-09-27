@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @Controller
+
 public class UserController {
 
     private UserService service;
@@ -21,53 +22,18 @@ public class UserController {
     public UserController(UserService service) {
         this.service = service;
     }
-
-
-
-
-
-    @GetMapping
-    public String index(Principal principal) {
-        if (principal == null) {
-            return "redirect:/login";
-        }
-        return String.format("redirect:/profile/%s", principal.getName());
+    @GetMapping("/profile/{login}")
+    public String index(Model model, Principal principal) {
+        User user = service.getUserByLogin(principal.getName());
+        model.addAttribute("user", user);
+        return "user";
     }
-
 
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
-
-    @GetMapping("/profile/{login}")
-    public String user(@PathVariable("login") String log, Model model) {
-        String logAuth = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (   log.equals( logAuth )   ) {
-            model.addAttribute("user", service.getUserByLogin(log));
-            model.addAttribute("userAuth", service.getUserByLogin(logAuth));
-            return "user";
-        } else if (   service.getUserByLogin(logAuth).isAdmin()   ) {
-            model.addAttribute("user", service.getUserByLogin(log));
-            model.addAttribute("userAuth", service.getUserByLogin(logAuth));
-            return "user";
-        }
-
-        return String.format("redirect:/profile/%s", logAuth);
-    }
-
-
-    @GetMapping("/admin")
-    public String admin(Model model, Authentication authentication) {
-        User user = service.getUserByLogin(authentication.getName());
-        model.addAttribute("currentuser", user);
-        model.addAttribute("all_users", service.getAllUsers());
-
-        return "admin";
-    }
-
-
-
 }
+
+

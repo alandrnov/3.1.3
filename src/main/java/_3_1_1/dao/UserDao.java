@@ -10,10 +10,6 @@ import java.util.Set;
 
 public interface UserDao {
 
-    Role getRoleByName(String name);
-
-    Set<Role> getRolesFromText(String text);
-
     List<User> getAllUsers();
 
     User getUser(long id);
@@ -25,8 +21,6 @@ public interface UserDao {
     void deleteUser(Long id);
 
     void updateUser(User user);
-
-    List<Role> getAllRoles();
 
     User getUserById(Long id);
 }

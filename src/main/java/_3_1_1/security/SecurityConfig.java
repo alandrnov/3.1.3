@@ -1,7 +1,12 @@
 package _3_1_1.security;
 
+import _3_1_1.security.oauth.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,15 +15,24 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Configuration
 @EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableOAuth2Client
+
+@PropertySource("classpath:application.properties")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final LoginSuccessHandler handler;
     private final UserDetailsService service;
+    private final CustomOAuth2UserService oAuth2UserService;
 
-    public SecurityConfig(LoginSuccessHandler loginSuccessHandler, UserDetailsService userDetailsService) {
-        handler = loginSuccessHandler;
-        service = userDetailsService;
+    @Autowired
+    public SecurityConfig(@Qualifier("userDetailsServiceImpl")UserDetailsService userDetailsService, LoginSuccessHandler loginSuccessHandler, CustomOAuth2UserService customOAuth2UserService) {
+        this.handler = loginSuccessHandler;
+        this.service = userDetailsService;
+        this.oAuth2UserService = customOAuth2UserService;
+
     }
 
     @Bean
@@ -42,6 +56,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .successHandler(handler)
+                .and()
+                .oauth2Login()
+                .loginPage("/login")
+                .userInfoEndpoint()
+                .userService(oAuth2UserService)
+                .and()
+                .successHandler(handler)
 
                 .and()
                 .logout()
@@ -52,6 +73,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin/**").hasRole("ADMIN");
+//               .and()
+//             .oauth2Login();
+
+//                .anyRequest().authenticated()
+//                .antMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/admin/**").hasRole("ADMIN")
+//                .and()
+//                .oauth2Login();
 
 
     }
