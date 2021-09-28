@@ -2,12 +2,9 @@ package _3_1_1.controllers;
 
 import _3_1_1.models.User;
 import _3_1_1.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
 
@@ -22,6 +19,7 @@ public class UserController {
     public UserController(UserService service) {
         this.service = service;
     }
+
     @GetMapping("/profile/{login}")
     public String index(Model model, Principal principal) {
         User user = service.getUserByLogin(principal.getName());
@@ -32,6 +30,11 @@ public class UserController {
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
     }
 
 }

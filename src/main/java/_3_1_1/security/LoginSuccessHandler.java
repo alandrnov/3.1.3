@@ -23,6 +23,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void setUserService(@Lazy UserService userService) {
         this.userService = userService;
     }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,

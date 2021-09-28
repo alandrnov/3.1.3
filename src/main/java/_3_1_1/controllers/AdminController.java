@@ -6,7 +6,7 @@ import _3_1_1.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class AdminController {
@@ -17,6 +17,7 @@ public class AdminController {
         this.service = service;
         this.roleService = roleService;
     }
+
     @GetMapping("/admin")
     public String admin(Model model, Authentication authentication) {
         User user = service.getUserByLogin(authentication.getName());

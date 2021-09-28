@@ -3,7 +3,6 @@ package _3_1_1.security;
 import _3_1_1.security.oauth.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -17,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
-//@EnableOAuth2Client
 
 @PropertySource("classpath:application.properties")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -28,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomOAuth2UserService oAuth2UserService;
 
     @Autowired
-    public SecurityConfig(@Qualifier("userDetailsServiceImpl")UserDetailsService userDetailsService, LoginSuccessHandler loginSuccessHandler, CustomOAuth2UserService customOAuth2UserService) {
+    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, LoginSuccessHandler loginSuccessHandler, CustomOAuth2UserService customOAuth2UserService) {
         this.handler = loginSuccessHandler;
         this.service = userDetailsService;
         this.oAuth2UserService = customOAuth2UserService;
@@ -48,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception{
+    public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
         http
@@ -73,18 +70,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin/**").hasRole("ADMIN");
-//               .and()
-//             .oauth2Login();
-
-//                .anyRequest().authenticated()
-//                .antMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/admin/**").hasRole("ADMIN")
-//                .and()
-//                .oauth2Login();
 
 
     }
-
 
 
 }

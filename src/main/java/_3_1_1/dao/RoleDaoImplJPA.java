@@ -6,12 +6,10 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Repository
-public class RoleDaoImpl_JPA implements RoleDAO{
+public class RoleDaoImplJPA implements RoleDAO {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -35,25 +33,7 @@ public class RoleDaoImpl_JPA implements RoleDAO{
                 .getSingleResult();
     }
 
-//    @Override
-//    public Set<Role> getRolesFromText(String text) {
-//        Set<Role> roles = new HashSet<>();
-//
-//        text = text.toLowerCase();
-//
-//        if ( text.contains("admin") ) {
-//            Role role = getRoleByName("ROLE_ADMIN");
-//            roles.add(role);
-//        }
-//        if ( text.contains("user") ) {
-//            Role role = getRoleByName("ROLE_USER");
-//            roles.add(role);
-//        }
-//
-//        return roles;
-//    }
     @Override
-
     public List<Role> getAllRoles() {
         return entityManager.createQuery("select r from Role r", Role.class).getResultList();
     }

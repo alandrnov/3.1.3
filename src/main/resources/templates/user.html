@@ -2,70 +2,70 @@
 <html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>User page</title>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" th:href="@{'https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css'}"
-        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
-        crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>User page</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{'https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css'}"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+          crossorigin="anonymous">
 
 </head>
 <body>
 <!--черная панель с именем юзера-->
 <nav class="navbar navbar-dark bg-dark">
-  <div class="navbar-brand inline">
-    <b th:text="${user.getUsername()}">name</b>
-    with roles:
-    <b class="font-weight-normal" th:text="${user.getRoles()}">role</b>
-  </div>
-  <div>
-    <a href="/login" class="text-secondary">Logout</a>
-  </div>
+    <div class="navbar-brand inline">
+        <b th:text="${user.getUsername()}">name</b>
+        with roles:
+        <b class="font-weight-normal" th:text="${user.getRoles()}">role</b>
+    </div>
+    <div>
+        <a href="/login" class="text-secondary">Logout</a>
+    </div>
 </nav>
 
 <div class="row no-gutters vh-100">
 
-  <!--    Левая панель     -->
-  <div class="col-md-2 bg-white">
-    <ul class="nav nav-pills flex-column mt-3">
+    <!--    Левая панель     -->
+    <div class="col-md-2 bg-white">
+        <ul class="nav nav-pills flex-column mt-3">
 
-      <a sec:authorize="hasRole('ADMIN')" class="nav-item nav-link" th:href="@{/admin}">Admin</a>
-      <a class="nav-item nav-link active" th:href="@{      /profile/{login}
+            <a sec:authorize="hasRole('ADMIN')" class="nav-item nav-link" th:href="@{/admin}">Admin</a>
+            <a class="nav-item nav-link active" th:href="@{      /profile/{login}
                                     (  login = ${ user.getLogin() }  )
                               }">User</a>
-    </ul>
-  </div>
-  <!--  Центральная панелька-->
-  <div class="col-md-10 bg-light">
-    <div class="container-fluid">
-      <div class="h3 mt-3">User information-page</div>
-
-      <div class="col-md bg-light border">
-        <h4 class=" mt-2 mb-3">About user</h4>
-      </div>
-
-      <div class="col-md bg-white border">
-        <table class="table table-striped mt-4">
-          <thead>
-
-          <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Cellphone</th>
-            <th>Role</th>
-            </tr>
-          <tr>
-            <td th:text="${user.getId()}">id</td>
-            <td th:text="${user.getFirstName()}">first name</td>
-            <td th:text="${user.getSecondName()}">second name</td>
-            <td th:text="${user.getCellphone()}">cellphone</td>
-            <td th:text="${user.getRoles()}">roles</td>
-          </tr>
-        </table>
-      </div>
+        </ul>
     </div>
-  </div>
+    <!--  Центральная панелька-->
+    <div class="col-md-10 bg-light">
+        <div class="container-fluid">
+            <div class="h3 mt-3">User information-page</div>
+
+            <div class="col-md bg-light border">
+                <h4 class=" mt-2 mb-3">About user</h4>
+            </div>
+
+            <div class="col-md bg-white border">
+                <table class="table table-striped mt-4">
+                    <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Cellphone</th>
+                        <th>Role</th>
+                    </tr>
+                    <tr>
+                        <td th:text="${user.getId()}">id</td>
+                        <td th:text="${user.getFirstName()}">first name</td>
+                        <td th:text="${user.getSecondName()}">second name</td>
+                        <td th:text="${user.getCellphone()}">cellphone</td>
+                        <td th:text="${user.getRoles()}">roles</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

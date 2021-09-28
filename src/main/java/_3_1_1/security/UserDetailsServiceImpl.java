@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private UserDao userDao;
+
     public UserDetailsServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -20,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
         User user = userDao.getUserByLogin(s);
-        if(user == null){
+        if (user == null) {
             throw new UsernameNotFoundException("can't found this user");
         }
         return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(), user.getAuthorities());

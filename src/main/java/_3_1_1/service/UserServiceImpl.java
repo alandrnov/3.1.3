@@ -3,19 +3,15 @@ package _3_1_1.service;
 import _3_1_1.dao.RoleDAO;
 import _3_1_1.dao.UserDao;
 import _3_1_1.models.AuthenticationProvider;
-import _3_1_1.models.Role;
 import _3_1_1.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,10 +24,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(UserDao userDao, RoleDAO roleDAO, PasswordEncoder passwordEncoder) {
-            this.userDao = userDao;
-            this.roleDAO = roleDAO;
-            this.passwordEncoder = passwordEncoder;
-        }
+        this.userDao = userDao;
+        this.roleDAO = roleDAO;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
@@ -58,6 +54,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void addUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAuthProvider(AuthenticationProvider.LOCAL);
         userDao.addUser(user);
     }
@@ -70,8 +67,17 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateUser(User user) {
-        userDao.updateUser(user);
+    public void updateUser(User updatedUser) {
+        User currentUser = userDao.getUserById(updatedUser.getId());
+        String newPassword = updatedUser.getPassword();
+        String oldPassword = currentUser.getPassword();
+
+        if (newPassword.equals("") || newPassword.equals(oldPassword)) {
+            updatedUser.setPassword(oldPassword);
+        } else {
+            updatedUser.setPassword(passwordEncoder.encode(newPassword));
+        }
+        userDao.updateUser(updatedUser);
     }
 
     @Transactional

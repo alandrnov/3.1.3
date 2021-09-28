@@ -1,20 +1,16 @@
 package _3_1_1.dao;
 
-import _3_1_1.models.Role;
 import _3_1_1.models.User;
 import org.springframework.stereotype.Repository;
-
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Repository
-public class UserDaoImpl_JPA implements UserDao {
+public class UserDaoImplJPA implements UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -33,11 +29,11 @@ public class UserDaoImpl_JPA implements UserDao {
     public User getUserByLogin(String login) {
         TypedQuery<User> query = entityManager.createQuery("select u from User u join fetch u.roles where u.login = :login", User.class)
                 .setParameter("login", login);
-                try {
-                    return query.getSingleResult();
-                }catch (NoResultException e) {
-                    return null;
-                }
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
@@ -56,12 +52,6 @@ public class UserDaoImpl_JPA implements UserDao {
 
         entityManager.merge(user);
     }
-
-//    @Override
-//
-//    public List<Role> getAllRoles() {
-//        return entityManager.createQuery("select r from Role r", Role.class).getResultList();
-//    }
 
     @Override
     public User getUserById(Long id) {
