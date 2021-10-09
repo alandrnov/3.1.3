@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
             newUser.setSecondName((String) attributes.get("family_name"));
         }
 
-        newUser.setPassword(DEFAULT_PASSWORD);
+        newUser.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
         newUser.setRoles(Collections.singleton(roleDAO.getRoleByName("ROLE_USER")));
 
 
